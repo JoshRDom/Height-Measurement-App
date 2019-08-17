@@ -76,13 +76,9 @@ data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
 //using prompt function
 function setCameraHeight()
 {
-  let heightAnsRef = document.getElementById('heightOfCamera');
+  let heightAnsRef = document.getElementById('heightOfCamera')
   let userHeight = prompt("Please enter your camera height");
-  while(isNaN(userHeight) || userHeight < 0)
-  {
-    alert("Invalid input! Camera height should be a postitive number.")
-    userHeight = prompt("Please enter your camera height in metres.");
-  }
+
   heightAnsRef.innerHTML = userHeight;
 }
 
