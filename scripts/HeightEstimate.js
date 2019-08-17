@@ -1,3 +1,5 @@
+"use strict";
+
 let deviceAbsolute = null;
 // try-catch: exception handling
 try
@@ -16,13 +18,11 @@ try
     {
       errorRef.innerText = "Cannot connect to the sensor.";
     }});
-
-        deviceAbsolute.start();
     // when sensor has a reading, call the function
     deviceAbsolute.addEventListener('reading', () => reloadOrientationValues(deviceAbsolute));
 
     //start the sensor
-
+    deviceAbsolute.start();
 }
 catch (error)
 {
@@ -44,8 +44,31 @@ catch (error)
 }
 
 // function to print value on the webpage
+let angleArray = [];
+
 function reloadOrientationValues(deviceAbsolute)
 {
-  document.getElementById("xValue").value = deviceAbsolute.quaternion[0];
-
+let x = deviceAbsolute.quaternion[0];
+let y = deviceAbsolute.quaternion[1];
+let z = deviceAbsolute.quaternion[2];
+let w = deviceAbsolute.quaternion[3];
+let angle = 0;
+let data = [];
+let output = 0;
+data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
+//console.log(data);
+  angle = data[0]*(180/Math.PI);
+  angleArray.push(angle);
+  if(angleArray.length == 5)
+  {
+    for(let i = 0;i < 5;i++)
+    {
+      output += angleArray[i];
+    }
+    document.getElementById("bValue").value = (output/5).toFixed(2);
+    angleArray = [];
+    output = 0;
+  }
 }
+
+// end: code for device orientation
