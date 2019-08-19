@@ -65,7 +65,7 @@ data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
     {
       output += angleArray[i];
     }
-    document.getElementById("bValue").value = (output/5).toFixed(2);
+    document.getElementById("bValue").innerHTML = (output/5).toFixed(2);
     angleArray = [];
     output = 0;
   }
@@ -76,9 +76,13 @@ data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
 //using prompt function
 function setCameraHeight()
 {
-  let heightAnsRef = document.getElementById('heightOfCamera')
+  let heightAnsRef = document.getElementById('heightOfCamera');
   let userHeight = prompt("Please enter your camera height");
-
+  while(isNaN(userHeight) || userHeight < 0)
+  {
+    alert("Invalid input! Camera height should be a postitive number.")
+    userHeight = prompt("Please enter your camera height in metres.");
+  }
   heightAnsRef.innerHTML = userHeight;
 }
 
