@@ -102,3 +102,18 @@ function recordBaseAngle()
 
   outputRef.innerHTML = bvalueRef;
 }
+
+function calculate()
+{
+  let distanceOfObjectRef = document.getElementById("distanceOfObject");
+  let heightOfObjectRef = document.getElementById("heightOfObject");
+  let h1 = document.getElementById("heightOfCamera").value;
+  let beta = output*(Math.PI/180);
+  distanceOfObjectRef.innerHTML = h1 * Math.tan(beta);
+
+  let hyp = Math.sqrt(h1**2 + d**2);
+  let theta = (alpha - beta)*(Math.PI/180);
+  let phi = (180 - theta - beta)*(Math.PI/180);
+  heightOfObjectRef.innerHTML = hyp * (Math.sin(theta)/Math.sin(phi))
+
+} 
