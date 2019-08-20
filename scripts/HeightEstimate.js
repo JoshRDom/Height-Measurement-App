@@ -89,16 +89,16 @@ function setCameraHeight()
 // --set condition where can only apply when camera is on
 function recordTopAngle()
 {
-  let bvalueRef = document.getElementById('bValue').value;
-  let outputRef = document.getElementById('topAngle');
+  let bvalueRef = document.getElementById("bValue").value;
+  let outputRef = document.getElementById("topAngle");
 
    outputRef.innerHTML = parseFloat(bvalueRef);
 }
 
 function recordBaseAngle()
 {
-  let bvalueRef = document.getElementById('bValue').value;
-  let outputRef = document.getElementById('baseAngle');
+  let bvalueRef = document.getElementById("bValue").value;
+  let outputRef = document.getElementById("baseAngle");
 
   outputRef.innerHTML = bvalueRef;
 }
