@@ -7,7 +7,7 @@ try
     // initialising object for device orientation
     deviceAbsolute = new AbsoluteOrientationSensor({ frequency: 10 });
 
-    //if sensor is available but there is problem in using it
+    // if sensor is available but there is problem in using it
     deviceAbsolute.addEventListener('error', event => {
     // Handle runtime errors.
     if (event.error.name === 'NotAllowedError')
@@ -21,7 +21,7 @@ try
     // when sensor has a reading, call the function
     deviceAbsolute.addEventListener('reading', () => reloadOrientationValues(deviceAbsolute));
 
-    //start the sensor
+    // start the sensor
     deviceAbsolute.start();
 }
 catch (error)
@@ -34,7 +34,7 @@ catch (error)
   }
   else if (error.name === 'ReferenceError')
   {
-    errorText =" Sensor is not supported by the User Agent.";
+    errorText = "Sensor is not supported by the User Agent.";
   }
   else
   {
@@ -45,45 +45,55 @@ catch (error)
 
 // function to print value on the webpage
 let angleArray = [];
+let output = 0;
+let userHeight = 0;
 
 function reloadOrientationValues(deviceAbsolute)
 {
-let x = deviceAbsolute.quaternion[0];
-let y = deviceAbsolute.quaternion[1];
-let z = deviceAbsolute.quaternion[2];
-let w = deviceAbsolute.quaternion[3];
-let angle = 0;
-let data = [];
-let output = 0;
-data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
-//console.log(data);
-  angle = data[0]*(180/Math.PI);
+  let x = deviceAbsolute.quaternion[0];
+  let y = deviceAbsolute.quaternion[1];
+  let z = deviceAbsolute.quaternion[2];
+  let w = deviceAbsolute.quaternion[3];
+  let data = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
+  let angle = data*(180/Math.PI);
+
   angleArray.push(angle);
+  output += angle;
   if(angleArray.length == 5)
   {
-    for(let i = 0;i < 5;i++)
-    {
-      output += angleArray[i];
-    }
     document.getElementById("bValue").innerHTML = (output/5).toFixed(2);
     angleArray = [];
     output = 0;
   }
 }
+// end: code for device orientation
 
-//A function to get the height
-//from the user for futture calculation
-//using prompt function
+// A function to get the height
+// from the user for future calculation
+// using prompt function
 function setCameraHeight()
 {
-  let heightAnsRef = document.getElementById('heightOfCamera');
-  let userHeight = prompt("Please enter your camera height");
-  while(isNaN(userHeight) || userHeight < 0)
+  let heightOfCameraRef = document.getElementById("heightOfCamera");
+  userHeight = prompt("Please enter your camera height in metres.");
+  while(isNaN(Number(userHeight)) || userHeight <= 0)
   {
-    alert("Invalid input! Camera height should be a postitive number.")
+    alert("Invalid input! Camera height should be a positive number.");
     userHeight = prompt("Please enter your camera height in metres.");
   }
-  heightAnsRef.innerHTML = userHeight;
+  heightOfCameraRef.innerHTML = userHeight;
 }
 
-// end: code for device orientation
+function calculate()
+{
+  let distanceOfObjectRef = document.getElementById("distanceOfObject");
+  let heightOfObjectRef = document.getElementById("heightOfObject");
+  let h1 = document.getElementById("heightOfCamera").value;
+  let beta = output*(Math.PI/180);
+  distanceOfObjectRef.innerHTML = h1 * Math.tan(beta);
+
+  let hyp = Math.sqrt(h1**2 + d**2);
+  let theta = (alpha - beta)*(Math.PI/180);
+  let phi = (180 - theta - beta)*(Math.PI/180);
+  heightOfObjectRef.innerHTML = hyp * (Math.sin(theta)/Math.sin(phi))
+
+}
