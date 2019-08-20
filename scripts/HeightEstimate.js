@@ -54,7 +54,7 @@ let z = deviceAbsolute.quaternion[2];
 let w = deviceAbsolute.quaternion[3];
 let angle = 0;
 let data = [];
-let output = 0;
+let output = 0; //changed let to var
 data[0] = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
 //console.log(data);
   angle = data[0]*(180/Math.PI);
@@ -82,4 +82,22 @@ function setCameraHeight()
   heightAnsRef.innerHTML = userHeight;
 }
 
-// end: code for device orientation
+//Function to capture the tilt angle when user hit Top angle
+//Record the beta value when the button is clicked
+//IMPROVE:
+// --set condition where can only apply when camera is on
+function recordTopAngle()
+{
+  let bvalueRef = document.getElementById('bValue').value;
+  let outputRef = document.getElementById('topAngle');
+
+   outputRef.innerHTML = parseFloat(bvalueRef);
+}
+
+function recordBaseAngle()
+{
+  let bvalueRef = document.getElementById('bValue').value;
+  let outputRef = document.getElementById('baseAngle');
+
+  outputRef.innerHTML = bvalueRef;
+}
