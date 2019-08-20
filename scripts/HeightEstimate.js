@@ -83,17 +83,22 @@ function setCameraHeight()
   heightOfCameraRef.innerHTML = userHeight;
 }
 
-function calculate()
+//Function to capture the tilt angle when user hit Top angle
+//Record the beta value when the button is clicked
+//IMPROVE:
+// --set condition where can only apply when camera is on
+function recordTopAngle()
 {
-  let distanceOfObjectRef = document.getElementById("distanceOfObject");
-  let heightOfObjectRef = document.getElementById("heightOfObject");
-  let h1 = document.getElementById("heightOfCamera").value;
-  let beta = output*(Math.PI/180);
-  distanceOfObjectRef.innerHTML = h1 * Math.tan(beta);
+  let bvalueRef = document.getElementById('bValue').value;
+  let outputRef = document.getElementById('topAngle');
 
-  let hyp = Math.sqrt(h1**2 + d**2);
-  let theta = (alpha - beta)*(Math.PI/180);
-  let phi = (180 - theta - beta)*(Math.PI/180);
-  heightOfObjectRef.innerHTML = hyp * (Math.sin(theta)/Math.sin(phi))
+   outputRef.innerHTML = parseFloat(bvalueRef);
+}
 
+function recordBaseAngle()
+{
+  let bvalueRef = document.getElementById('bValue').value;
+  let outputRef = document.getElementById('baseAngle');
+
+  outputRef.innerHTML = bvalueRef;
 }

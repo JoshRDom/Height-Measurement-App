@@ -73,9 +73,9 @@
                     Switch video off
                     </div>
 
-                    <div>
-                      <button id="top" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Set base</button>
-                        <button id="bottom" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Set top</button><br/>
+                    <div>                              <!-- added onclick for top and base angle here -->
+                      <button onclick='recordBaseAngle()' id="top" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Set base</button>
+                        <button  onclick='recordTopAngle()' id="bottom" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Set top</button><br/>
                       </br/>
                         <button id="calculateButton" onclick="calculate()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Calculate...</button><br/>
                       </br/>
@@ -87,11 +87,11 @@
                             <td id="heightOfCamera" class="mdl-data-table__cell--non-numeric"></td>
                           </tr>
                           <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Top angle</td>
-                            <td id="topAngle" class="mdl-data-table__cell--non-numeric"></td>
+                            <td class="mdl-data-table__cell--non-numeric" >Top angle</td>
+                            <td id="topAngle"  class="mdl-data-table__cell--non-numeric"></td>
                           </tr>
                           <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Base angle</td>
+                            <td class="mdl-data-table__cell--non-numeric" >Base angle</td>
                             <td id="baseAngle" class="mdl-data-table__cell--non-numeric"></td>
                           </tr>
                           <tr>
