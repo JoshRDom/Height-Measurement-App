@@ -78,6 +78,12 @@ function setCameraHeight()
 {
   let heightAnsRef = document.getElementById('heightOfCamera')
   let userHeight = prompt("Please enter your camera height");
+   while(isNaN(userHeight) || userHeight < 0) 
+  { 
+    alert("Invalid input! Camera height should be a postitive number.") 
+    userHeight = prompt("Please enter your camera height in metres."); 
+  } 
+  heightAnsRef.innerHTML = userHeight; 
 
   heightAnsRef.innerHTML = userHeight;
 }
