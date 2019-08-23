@@ -46,7 +46,7 @@ catch (error)
 // function to print value on the webpage
 let angleArray = [];
 let output = 0;
-let userHeight,topAngle,baseAngle;;
+let userHeight,topAngle,baseAngle;
 let baseAngleCheck = 0;
 let topAngleCheck = 0;
 
@@ -82,8 +82,16 @@ function setCameraHeight()
   // until a valid input is entered
   while(isNaN(Number(userHeight)) || userHeight <= 0)
   {
-    alert("Invalid input! Camera height should be a positive number.");
-    userHeight = prompt("Please enter your camera height in metres.");
+    if(userHeight == null)
+    {
+      userHeight = 1.6;
+      alert("A default of 1.6m has been set.")
+    }
+    else
+    {
+      alert("Invalid input! Camera height should be a positive number.");
+      userHeight = prompt("Please enter your camera height in metres.");
+    }
   }
   heightOfCameraRef.innerHTML = userHeight + "m";
   // enabling the calculate button only when base angle, top angle
@@ -104,6 +112,7 @@ function recordTopAngle()
   let outputRef = document.getElementById("topAngle");
   topAngle = bvalueRef;
   outputRef.innerHTML = topAngle + "&deg;";
+  alert("Top angle has been set successfully!");
   topAngleCheck += 1;
   // enabling the calculate button only when base angle, top angle
   // and user height are present
@@ -119,6 +128,7 @@ function recordBaseAngle()
   let outputRef = document.getElementById("baseAngle");
   baseAngle = bvalueRef;
   outputRef.innerHTML = baseAngle + "&deg;";
+  alert("Base angle has been set successfully!");
   baseAngleCheck += 1;
   // enabling the calculate button only when base angle, top angle
   // and user height are present
