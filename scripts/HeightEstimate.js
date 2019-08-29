@@ -5,7 +5,7 @@ let deviceAbsolute = null;
 try
 {
     // initialising object for device orientation
-    deviceAbsolute = new AbsoluteOrientationSensor({ frequency: 30 });
+    deviceAbsolute = new AbsoluteOrientationSensor({ frequency: 50 });
 
     // if sensor is available but there is problem in using it
     deviceAbsolute.addEventListener('error', event => {
@@ -44,7 +44,10 @@ catch (error)
 }
 
 // function to print value on the webpage
-let angleArray = [];
+let angleArray = []; //array that store the smoothed value of [alpha,beta,gamma]
+let betaArray = [];
+let alphaArray = [];
+let gammaArray = [];
 let output = 0;
 let userHeight,topAngle,baseAngle;
 let baseAngleCheck = 0;
@@ -53,27 +56,54 @@ let topAngleCheck = 0;
 function reloadOrientationValues(deviceAbsolute)
 {
   let x = deviceAbsolute.quaternion[0];
-  let y = deviceAbsolute.quaternion[1];
-  let z = deviceAbsolute.quaternion[2];
-  let w = deviceAbsolute.quaternion[3];
-  let data = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
-  let angle = data*(180/Math.PI);
+	let y = deviceAbsolute.quaternion[1];
+	let z = deviceAbsolute.quaternion[2];
+	let w = deviceAbsolute.quaternion[3];
+	let beta = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2))); //beta
+	let gamma = Math.asin(2*(w*y - x*z)); //gamma
+	let alpha = Math.atan2(2*(w*z + x*y),1 - 2*(Math.pow(y,2)+Math.pow(z,2)));//alpha
 
-  angleArray.push(angle);
-  output += angle;
-  if(angleArray.length == 10)
+  //pushing the value into the respective angle array
+  betaArray.push(beta);
+  alphaArray.push(alpha);
+  gammaArray.push(gamma);
+  console.log('B ' + betaArray.length);
+
+  //if alphaArray length is 10, betaArray and gammaArray will also be 10
+  if (betaArray.length == 10)
   {
-    let averageAngle = (output/10).toFixed(2);
-    document.getElementById("bValue").innerHTML = averageAngle;
-    angleArray = [];
-    output = 0;
+    Smoothing();
+    //reset all the value inside the array after every iteration
+    betaArray = [];
+    alphaArray = [];
+    gammaArray = [];
   }
+}
+//Function used to smooth the data
+//Output: the smoothed data from the inputted value
+function Smoothing()
+{
+  let betaTotal = 0;
+  let alphaTotal = 0;
+  let gammaTotal = 0;
+
+  for (let i in betaArray)
+  {
+    betaTotal += betaArray[i];
+    alphaTotal += alphaArray[i];
+    gammaTotal += gammaArray[i];
+  }
+
+  angleArray[0] = ((alphaTotal/10)*(180/Math.PI)).toFixed(2);
+  angleArray[1] = ((betaTotal/10)*(180/Math.PI)).toFixed(2);
+  angleArray[2] =  ((gammaTotal/10)*(180/Math.PI)).toFixed(2);
+  document.getElementById("bValue").innerHTML = angleArray[1];
 }
 // end: code for device orientation
 
 // A function to get the height
-// from the user for future calculation
-// using prompt function
+//from the user for future calculation
+//using prompt function
 function setCameraHeight()
 {
   let heightOfCameraRef = document.getElementById("heightOfCamera");
@@ -85,7 +115,7 @@ function setCameraHeight()
     if(userHeight == null)
     {
       userHeight = 1.6;
-      alert("A default of 1.6m has been set.")
+      alert("A default height of 1.6m has been set.")
     }
     else
     {
@@ -93,6 +123,8 @@ function setCameraHeight()
       userHeight = prompt("Please enter your camera height in metres.");
     }
   }
+  //end of while loop
+
   heightOfCameraRef.innerHTML = userHeight + "m";
   // enabling the calculate button only when base angle, top angle
   // and user height are present
@@ -113,7 +145,8 @@ function recordTopAngle()
   topAngle = bvalueRef;
   outputRef.innerHTML = topAngle + "&deg;";
   alert("Top angle has been set successfully!");
-  topAngleCheck += 1;
+  topAngleCheck += 1
+
   // enabling the calculate button only when base angle, top angle
   // and user height are present
   if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
@@ -130,6 +163,7 @@ function recordBaseAngle()
   outputRef.innerHTML = baseAngle + "&deg;";
   alert("Base angle has been set successfully!");
   baseAngleCheck += 1;
+
   // enabling the calculate button only when base angle, top angle
   // and user height are present
   if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
@@ -138,6 +172,9 @@ function recordBaseAngle()
   }
 }
 
+// Function to calculate the distance and height
+// Output: return height of the object
+//       : distance from user to the object
 function calculate()
 {
   let distanceOfObjectRef = document.getElementById("distanceOfObject");
