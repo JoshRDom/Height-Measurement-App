@@ -44,12 +44,10 @@ catch (error)
 }
 
 // function to print value on the webpage
-let angleArray = []; //array that store the smoothed value of [alpha,beta,gamma]
 let betaArray = [];
-let alphaArray = [];
 let gammaArray = [];
 let output = 0;
-let userHeight,topAngle,baseAngle;
+let userHeight,topAngle,baseAngle,averageBeta,averageGamma;
 let baseAngleCheck = 0;
 let topAngleCheck = 0;
 
@@ -61,43 +59,36 @@ function reloadOrientationValues(deviceAbsolute)
 	let w = deviceAbsolute.quaternion[3];
 	let beta = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2))); //beta
 	let gamma = Math.asin(2*(w*y - x*z)); //gamma
-	let alpha = Math.atan2(2*(w*z + x*y),1 - 2*(Math.pow(y,2)+Math.pow(z,2)));//alpha
 
   //pushing the value into the respective angle array
   betaArray.push(beta);
-  alphaArray.push(alpha);
   gammaArray.push(gamma);
-  console.log('B ' + betaArray.length);
 
   //if alphaArray length is 10, betaArray and gammaArray will also be 10
   if (betaArray.length == 10)
   {
-    Smoothing();
+    smoothing();
     //reset all the value inside the array after every iteration
     betaArray = [];
-    alphaArray = [];
     gammaArray = [];
   }
 }
 //Function used to smooth the data
 //Output: the smoothed data from the inputted value
-function Smoothing()
+function smoothing()
 {
   let betaTotal = 0;
-  let alphaTotal = 0;
   let gammaTotal = 0;
 
   for (let i in betaArray)
   {
     betaTotal += betaArray[i];
-    alphaTotal += alphaArray[i];
     gammaTotal += gammaArray[i];
   }
 
-  angleArray[0] = ((alphaTotal/10)*(180/Math.PI)).toFixed(2);
-  angleArray[1] = ((betaTotal/10)*(180/Math.PI)).toFixed(2);
-  angleArray[2] =  ((gammaTotal/10)*(180/Math.PI)).toFixed(2);
-  document.getElementById("bValue").innerHTML = angleArray[1];
+  averageBeta = ((betaTotal/10)*(180/Math.PI)).toFixed(2);
+  averageGamma =  ((gammaTotal/10)*(180/Math.PI)).toFixed(2);
+  document.getElementById("bValue").innerHTML = averageBeta;
 }
 // end: code for device orientation
 
@@ -112,7 +103,7 @@ function setCameraHeight()
   // until a valid input is entered
   while(isNaN(Number(userHeight)) || userHeight <= 0)
   {
-    if(userHeight == null)
+    if(userHeight == null || userHeight == "")
     {
       userHeight = 1.6;
       alert("A default height of 1.6m has been set.")
@@ -132,6 +123,10 @@ function setCameraHeight()
   {
     document.getElementById("calculateButton").disabled = false;
   }
+  else
+  {
+    document.getElementById("calculateButton").disabled = true;
+  }
 }
 
 //Function to capture the tilt angle when user hit Top angle
@@ -140,35 +135,77 @@ function setCameraHeight()
 // --set condition where can only apply when camera is on
 function recordTopAngle()
 {
-  let bvalueRef = document.getElementById("bValue").innerText;
-  let outputRef = document.getElementById("topAngle");
-  topAngle = bvalueRef;
-  outputRef.innerHTML = topAngle + "&deg;";
-  alert("Top angle has been set successfully!");
-  topAngleCheck += 1
-
-  // enabling the calculate button only when base angle, top angle
-  // and user height are present
-  if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
+  if(averageGamma >= -30 && averageGamma <= 30 && averageBeta >= 0 && averageBeta <= 180)
   {
-    document.getElementById("calculateButton").disabled = false;
+    let bvalueRef = document.getElementById("bValue").innerText;
+    let outputRef = document.getElementById("topAngle");
+    topAngle = Number(bvalueRef);
+    if(baseAngle != undefined && baseAngle > topAngle)
+    {
+      alert("Top angle must be greater than base angle!");
+      topAngle = undefined;
+      topAngleCheck = 0;
+      outputRef.innerHTML = "";
+    }
+    else
+    {
+      outputRef.innerHTML = topAngle + "&deg;";
+      alert("Top angle has been set successfully!");
+      topAngleCheck += 1;
+      }
+
+    // enabling the calculate button only when base angle, top angle
+    // and user height are present
+    if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
+    {
+      document.getElementById("calculateButton").disabled = false;
+    }
+    else
+    {
+      document.getElementById("calculateButton").disabled = true;
+    }
+  }
+  else
+  {
+    alert("Device orientation is invalid!");
   }
 }
 
 function recordBaseAngle()
 {
-  let bvalueRef = document.getElementById("bValue").innerText;
-  let outputRef = document.getElementById("baseAngle");
-  baseAngle = bvalueRef;
-  outputRef.innerHTML = baseAngle + "&deg;";
-  alert("Base angle has been set successfully!");
-  baseAngleCheck += 1;
-
-  // enabling the calculate button only when base angle, top angle
-  // and user height are present
-  if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
+  if(averageGamma >= -30 && averageGamma <= 30 && averageBeta >= 0 && averageBeta <= 180)
   {
-    document.getElementById("calculateButton").disabled = false;
+    let bvalueRef = document.getElementById("bValue").innerText;
+    let outputRef = document.getElementById("baseAngle");
+    baseAngle = Number(bvalueRef);
+    if(topAngle != undefined && topAngle < baseAngle)
+    {
+      alert("Base angle must be smaller than top angle!");
+      baseAngle = undefined;
+      baseAngleCheck = 0;
+      outputRef.innerHTML = "";
+    }
+    else
+    {
+      outputRef.innerHTML = baseAngle + "&deg;";
+      alert("Base angle has been set successfully!");
+      baseAngleCheck += 1;
+    }
+
+    // enabling the calculate button only when base angle, top angle
+    // and user height are present
+    if(baseAngleCheck >= 1 && topAngleCheck >=1 && userHeight != undefined)
+    {
+      document.getElementById("calculateButton").disabled = false;
+    }
+    else
+    {
+      document.getElementById("calculateButton").disabled = true;
+    }
+  }
+  else
+  {
+    alert("Device orientation is invalid!");
   }
 }
 
