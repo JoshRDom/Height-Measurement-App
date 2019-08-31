@@ -90,7 +90,7 @@ function smoothing()
     /*
     smoothing() is a function that
     calculates the average of angle values in 'betaArray' and 'gammaArray',
-    registers the average into global variables 'averageBeta' and 'averageGamma' respectively
+    registers the average into global variables 'betaAverage' and 'gammaAverage' respectively
     and prints 'averageBeta' into the HTML element that has the id "bValue"
     */
     
