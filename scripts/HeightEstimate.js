@@ -6,7 +6,7 @@ let errorRef = document.getElementById("toast");
 try
 {
     // initialising object for device orientation
-    deviceAbsolute = new AbsoluteOrientationSensor({ frequency: 60 });
+    deviceAbsolute = new AbsoluteOrientationSensor({ frequency: 50 });
 
     // if sensor is available but there is problem in using it
     deviceAbsolute.addEventListener('error', event => {
@@ -45,9 +45,10 @@ catch (error)
 }
 
 // GLOBAL VARIABLES
-let instBeta; // Instantaneous beta angle values in radians
-let instGamma; // Instantaneous gamma angle values in radians
-let betaArray = []; // Array to store instantaneous beta angle values
+let betaArray = []; // Array to store beta angle values
+let gammaArray = []; // Array to store gamma angle values
+let betaAverage; // beta angle value averaged from betaArray
+let gammaAverage; // gamma angle value averaged from gammaArray
 let userHeight; // Height of camera from the ground, estimated to be the user's own height
 let topAngle; // Beta angle of the top of the object
 let baseAngle; // Beta angle of the base of the object
@@ -59,24 +60,28 @@ function reloadOrientationValues(deviceAbsolute)
     takes an object 'deviceAbsolute'
     and computes the beta and gamma angle values of the device.
     
-    beta angle values are pushed into betaArray.
-    Once the array reaches a certain length,
+    beta and gamma angle values are pushed into betaArray and gammaArray respectively.
+    Once the arrays reaches a certain length,
     the function smoothing() will run
-    and betaArray will be emptied.
+    and the arrays will be emptied.
     */
 
     let x = deviceAbsolute.quaternion[0];
     let y = deviceAbsolute.quaternion[1];
     let z = deviceAbsolute.quaternion[2];
     let w = deviceAbsolute.quaternion[3];
-    instBeta = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
-    instGamma = Math.asin(2*(w*y - x*z));
+    
+    let beta = Math.atan2(2*(w*x + y*z), 1 - 2*(Math.pow(x,2)+Math.pow(y,2)));
+    let gamma = Math.asin(2*(w*y - x*z));
 
-    betaArray.push(instBeta);
-    if (betaArray.length == 20)
+    betaArray.push(beta);
+    gammaArray.push(gamma);
+    
+    if ( betaArray.length == 10 )
     {
         smoothing();
         betaArray = [];
+        gammaArray = [];
     }
 }
 
@@ -84,19 +89,23 @@ function smoothing()
 {
     /*
     smoothing() is a function that
-    calculates the average of angle values in betaArray
-    and prints the average into the HTML element that has the id "bValue"
+    calculates the average of angle values in 'betaArray' and 'gammaArray',
+    registers the average into global variables 'averageBeta' and 'averageGamma' respectively
+    and prints 'averageBeta' into the HTML element that has the id "bValue"
     */
     
     let betaTotal = 0;
+    let gammaTotal = 0;
 
-    for (let i in betaArray)
+    for ( let i in betaArray )
     {
         betaTotal += betaArray[i];
+        gammaTotal += gammaArray[i];
     }
 
-    let averageBeta = (betaTotal/betaArray.length)*(180/Math.PI);
-    document.getElementById("bValue").innerHTML = averageBeta.toFixed(2) + "&deg;";
+    betaAverage = betaTotal/betaArray.length;
+    gammaAverage = gammaTotal/gammaArray.length;
+    document.getElementById("bValue").innerHTML = (betaAverage*(180/Math.PI)).toFixed(2) + "&deg;";
 }
 
 function cameraHeight()
@@ -113,9 +122,9 @@ function cameraHeight()
     
     userHeight = prompt("Please enter your camera height in metres.");
     
-    while(isNaN(Number(userHeight)) || userHeight <= 0)
+    while( isNaN(Number(userHeight)) || userHeight <= 0 )
     {
-        if(userHeight == null || userHeight == "")
+        if( userHeight == null || userHeight == "" )
         {
             // In the case where the input field was left empty, a default height is set.
             userHeight = 1.6;
@@ -129,7 +138,7 @@ function cameraHeight()
         }
     }
 
-    document.getElementById("heightOfCamera").innerHTML = userHeight + "m";
+    document.getElementById("heightOfCamera").innerHTML = userHeight + " m";
     if( baseAngle != undefined && topAngle != undefined && userHeight != undefined )
     {
         document.getElementById("calculateButton").disabled = false;
@@ -145,7 +154,7 @@ function measureApexAngle()
     /*
     measureApexAngle() is an onclick function that
     checks if the device is in an appropriate orientation
-    before registering the instantaneous beta angle value
+    before registering the value of global variable 'averageBeta'
     into the global variable 'topAngle'
     
     It will then check if global variables
@@ -153,10 +162,10 @@ function measureApexAngle()
     so that the CALCULATE button may be enabled.
     */
     
-    if( instGamma >= -Math.PI/6 && instGamma <= Math.PI/6 && instBeta >= 0 && instBeta <= Math.PI )
+    if ( gammaAverage >= -Math.PI/6 && gammaAverage <= Math.PI/6 && betaAverage >= 0 && betaAverage <= Math.PI )
     {
         
-        if( baseAngle != undefined && baseAngle > instBeta )
+        if ( baseAngle != undefined && baseAngle > betaAverage )
         {
             alert("Top angle must be greater than base angle!");
             topAngle = undefined;
@@ -164,7 +173,7 @@ function measureApexAngle()
         }
         else
         {
-            topAngle = instBeta;
+            topAngle = betaAverage;
             document.getElementById("topAngle").innerHTML = (topAngle*(180/Math.PI)).toFixed(2) + "&deg;";
             alert("Top angle has been set successfully!");
         }
@@ -189,7 +198,7 @@ function measureBaseAngle()
     /*
     measureBaseAngle() is an onclick function that
     checks if the device is in an appropriate orientation
-    before registering the instantaneous beta angle value
+    before registering the value of global variable 'averageBeta'
     into the global variable 'baseAngle'
     
     It will then check if global variables
@@ -197,10 +206,10 @@ function measureBaseAngle()
     so that the CALCULATE button may be enabled.
     */
     
-    if( instGamma >= -Math.PI/6 && instGamma <= Math.PI/6 && instBeta >= 0 && instBeta <= Math.PI )
+    if( gammaAverage >= -Math.PI/6 && gammaAverage <= Math.PI/6 && betaAverage >= 0 && betaAverage <= Math.PI )
     {
         
-        if(topAngle != undefined && topAngle < instBeta)
+        if( topAngle != undefined && topAngle < betaAverage )
         {
             alert("Base angle must be smaller than top angle!");
             baseAngle = undefined;
@@ -208,7 +217,7 @@ function measureBaseAngle()
         }
         else
         {
-            baseAngle = instBeta;
+            baseAngle = betaAverage;
             document.getElementById("baseAngle").innerHTML = (baseAngle*(180/Math.PI)).toFixed(2) + "&deg;";
             alert("Base angle has been set successfully!");
         }
@@ -237,8 +246,8 @@ function calculate()
     */
     
     let distance = Number(userHeight) * Math.tan(baseAngle);
-    document.getElementById("distanceOfObject").innerHTML = distance.toFixed(2) + "m";
+    document.getElementById("distanceOfObject").innerHTML = distance.toFixed(2) + " m";
 
     let height = Number(userHeight) + distance * Math.tan(topAngle - Math.PI/2);
-    document.getElementById("heightOfObject").innerHTML = height.toFixed(2) + "m";
+    document.getElementById("heightOfObject").innerHTML = height.toFixed(2) + " m";
 }
