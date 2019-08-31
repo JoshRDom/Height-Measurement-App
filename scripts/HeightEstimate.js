@@ -154,7 +154,7 @@ function measureApexAngle()
     /*
     measureApexAngle() is an onclick function that
     checks if the device is in an appropriate orientation
-    before registering the value of global variable 'averageBeta'
+    before registering the value of global variable 'betaAverage'
     into the global variable 'topAngle'
     
     It will then check if global variables
@@ -198,7 +198,7 @@ function measureBaseAngle()
     /*
     measureBaseAngle() is an onclick function that
     checks if the device is in an appropriate orientation
-    before registering the value of global variable 'averageBeta'
+    before registering the value of global variable 'betaAverage'
     into the global variable 'baseAngle'
     
     It will then check if global variables
