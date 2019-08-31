@@ -2,7 +2,7 @@
 
 let deviceAbsolute = null;
 // try-catch: exception handling
-let errorRef = document.getElementsById("toast");
+let errorRef = document.getElementById("toast");
 try
 {
     // initialising object for device orientation
