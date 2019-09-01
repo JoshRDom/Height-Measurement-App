@@ -206,7 +206,7 @@ function measureBaseAngle()
     so that the CALCULATE button may be enabled.
     */
     
-    if( gammaAverage >= -Math.PI/6 && gammaAverage <= Math.PI/6 && betaAverage >= 0 && betaAverage <= Math.PI )
+    if( gammaAverage >= -Math.PI/6 && gammaAverage <= Math.PI/6 && betaAverage >= 0 && betaAverage <= Math.PI/2 )
     {
         
         if( topAngle != undefined && topAngle < betaAverage )
