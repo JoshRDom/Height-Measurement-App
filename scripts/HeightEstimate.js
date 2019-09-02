@@ -191,7 +191,7 @@ function cameraHeight()
         {
           continue;   //dont do anything
         }
-        if( userHeight == null || userHeight == "" )
+        else if( userHeight == null || userHeight == "" )
         {
             userHeight = 1.6;
             alert("A default height of 1.6m has been set.")
