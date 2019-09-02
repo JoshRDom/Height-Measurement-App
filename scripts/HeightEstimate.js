@@ -193,7 +193,7 @@ function cameraHeight()
         this function, betaAverage is checked for validity
         beforehand        
 */
-function measureApexAngle()
+function measureTopAngle()
 {
     if ( gammaAverage >= -Math.PI/6 && gammaAverage <= Math.PI/6 && betaAverage >= 0 && betaAverage <= Math.PI )
     {
