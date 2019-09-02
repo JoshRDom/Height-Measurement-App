@@ -1,4 +1,6 @@
 /*
+try-catch: exception handling
+and reloadOrientationValues()
 Extracted from: https://eng1003.monash/apps/sensortest/
 Sensor Test web app
 Copyright (c) 2019 Monash University
@@ -168,9 +170,9 @@ function reloadOrientationValues(deviceAbsolute)
     This function obtains a value for global variable
     userHeight from the user, and prints this value to the
     HTML. It does this by prompting the user for their height.
-    Should the input be invalid (negative number or not a
-    number), the user will be prompted again. If the field was
-    left empty, however, a default height of 1.6 m is set
+    Should the input be invalid or insane (negative number or
+    not a number), the user will be prompted again. If the field
+    was left empty, however, a default height of 1.6 m is set
     instead.
 
     postconditions:
@@ -208,10 +210,10 @@ function cameraHeight()
     This function obtains a value for global variable
     topAngle from global variable betaAverage, and prints this
     value to the HTML. It will check if the current
-    betaAverage value is valid (beta between 0 and PI, and
-    larger that baseAngle if defined) and sane (gamma 
-    between -PI/6 and PI/6) first before allowing the
-    current betaAverage value to be saved into topAngle.
+    betaAverage value is valid (beta between 0 and PI,
+    larger that baseAngle if defined, gamma between -PI/6 and
+    PI/6) first before allowing the current betaAverage value
+    to be saved into topAngle.
 
     preconditions:
         device must be in the appropriate orientation as
@@ -259,10 +261,10 @@ function measureTopAngle()
     This function obtains a value for global variable
     baseAngle from global variable betaAverage, and prints this
     value to the HTML. It will check if the current
-    betaAverage value is valid (beta between 0 and PI/2, and
-    smaller that topAngle if defined) and sane (gamma 
-    between -PI/6 and PI/6) first before allowing the
-    current betaAverage value to be saved into baseAngle.
+    betaAverage value is valid (beta between 0 and PI/2,
+    smaller that topAngle if defined, gamma between -PI/6 and
+    PI/6) first before allowing the current betaAverage value
+    to be saved into baseAngle.
 
     preconditions:
         device must be in the appropriate orientation as
