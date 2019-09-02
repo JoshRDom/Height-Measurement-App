@@ -92,11 +92,11 @@ function smoothing(anArray)
 
 /*
     buttonCheck()
-    
+
     This function checks if global variables baseAngle, topAngle
     and userHeight are defined. If they are, the calculate button
     of the HTML will be enabled.
-    
+
     postconditions:
         if baseAngle, topAngle and userHeight are defined, the
         calculate button will be enabled. If any of these global
@@ -185,9 +185,12 @@ function reloadOrientationValues(deviceAbsolute)
 function cameraHeight()
 {
     userHeight = prompt("Please enter your camera height in metres.");
-
     while( isNaN(Number(userHeight)) || userHeight <= 0 )
     {
+        if( userHeight !== null) //if the user had already inputed a height
+        {
+          continue;   //dont do anything
+        }
         if( userHeight == null || userHeight == "" )
         {
             userHeight = 1.6;
@@ -211,7 +214,7 @@ function cameraHeight()
     topAngle from global variable betaAverage, and prints this
     value to the HTML. It will check if the current
     betaAverage value is valid (beta between 0 and PI, and
-    larger that baseAngle if defined) and sane (gamma 
+    larger that baseAngle if defined) and sane (gamma
     between -PI/6 and PI/6) first before allowing the
     current betaAverage value to be saved into topAngle.
 
@@ -221,13 +224,13 @@ function cameraHeight()
         if-else statements;
 
     postconditions:
-        global variable topAngle will be defined and the 
+        global variable topAngle will be defined and the
         current value of betaAverage will be printed into
-        the HTML. If baseAngle was defined prior to running 
+        the HTML. If baseAngle was defined prior to running
         this function, betaAverage is checked for validity
         beforehand;
         the function buttonCheck() is run to determine if
-        the calculate button may be enable        
+        the calculate button may be enable
 */
 function measureTopAngle()
 {
@@ -262,7 +265,7 @@ function measureTopAngle()
     baseAngle from global variable betaAverage, and prints this
     value to the HTML. It will check if the current
     betaAverage value is valid (beta between 0 and PI/2, and
-    smaller that topAngle if defined) and sane (gamma 
+    smaller that topAngle if defined) and sane (gamma
     between -PI/6 and PI/6) first before allowing the
     current betaAverage value to be saved into baseAngle.
 
@@ -272,13 +275,13 @@ function measureTopAngle()
         if-else statements;
 
     postconditions:
-        global variable baseAngle will be defined and the 
+        global variable baseAngle will be defined and the
         current value of betaAverage will be printed into
-        the HTML. If topAngle was defined prior to running 
+        the HTML. If topAngle was defined prior to running
         this function, betaAverage is checked for validity
         beforehand;
         the function buttonCheck() is run to determine if
-        the calculate button may be enable        
+        the calculate button may be enable
 */
 function measureBaseAngle()
 {
