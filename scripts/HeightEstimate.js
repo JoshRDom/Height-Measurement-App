@@ -52,14 +52,66 @@ catch (error)
 }
 
 // GLOBAL VARIABLES
-let betaArray = []; // Array to store beta angle values
+let betaArray = [];  // Array to store beta angle values
 let gammaArray = []; // Array to store gamma angle values
-let betaAverage; // beta angle value averaged from betaArray
-let gammaAverage; // gamma angle value averaged from gammaArray
-let userHeight; // Height of camera from the ground, estimated to be the user's own height
-let topAngle; // Beta angle of the top of the object
-let baseAngle; // Beta angle of the base of the object
+let betaAverage;     // Beta angle, averaged from betaArray, in radians
+let gammaAverage;    // Gamma angle, averaged from gammaArray, in radians
+let userHeight;      // Height of camera from the ground, estimated to be the user's own height
+let topAngle;        // Beta angle of the top of the object, in radians
+let baseAngle;       // Beta angle of the base of the object, in radians
 
+/*
+    smoothing()
+
+    This function computes the average of elements in an array
+    by performing summation using a for loop and then dividing
+    the sum by the array length
+
+    argument: anArray: this represents the array in which the
+        average value of its elements is to be determined
+
+    preconditions:
+        array must only contain number-type elements
+
+    returns:
+        the average of elements in the array
+*/
+function smoothing(anArray)
+{
+    let sum = 0;
+
+    for ( let i in anArray )
+    {
+        sum += anArray[i];
+    }
+
+    return sum/anArray.length;
+}
+
+/*
+    buttonCheck()
+    
+    This function checks if global variables baseAngle, topAngle
+    and userHeight are defined. If they are, the calculate button
+    of the HTML will be enabled.
+    
+    postconditions:
+        if baseAngle, topAngle and userHeight are defined, the
+        calculate button will be enabled. If any of these global
+        variables become undefined, prior to calling this
+        function, the calculate button is once again disabled
+*/
+function buttonCheck()
+{
+    if( baseAngle != undefined && topAngle != undefined && userHeight != undefined )
+        {
+            document.getElementById("calculateButton").disabled = false;
+        }
+        else
+        {
+            document.getElementById("calculateButton").disabled = true;
+        }
+}
 /*
     reloadOrientationValues()
 
@@ -72,13 +124,13 @@ let baseAngle; // Beta angle of the base of the object
     pushed into betaArray and gammaArray and once the arrays
     reach a predetermined length, the function smoothing() is
     run, then the arrays are emptied.
-    
+
     argument: deviceAbsolute: this is the object that
         has the property quaternion. corresponding to this
         property, is an array that contains four numbers
         which act as parameters to the device's orientation
         in the alpha, beta and gamma direction.
-        
+
     postconditions:
         once calculated, beta and gamma angles are pushed into
         betaArray and gammaArray respectively. When the arrays
@@ -102,47 +154,31 @@ function reloadOrientationValues(deviceAbsolute)
     {
         betaAverage = smoothing(betaArray);
         gammaAverage = smoothing(gammaArray);
-        
+
         document.getElementById("bValue").innerHTML = (betaAverage*(180/Math.PI)).toFixed(2) + "&deg;";
-        
+
         betaArray = [];
         gammaArray = [];
     }
 }
 
 /*
-    smoothing()
-    
-    argument: anArray: this represents the array in which the
-        average value of its elements is to be determined
-        
-    preconditions:
-        array must only contain number-type elements
-    
-    returns:
-        the average of elements in the array
-*/
-function smoothing(anArray)
-{
-    let sum = 0;
+    cameraHeight()
 
-    for ( let i in anArray )
-    {
-        sum += anArray[i];
-    }
+    This function obtains a value for global variable
+    userHeight from the user, and prints this value to the
+    HTML. It does this by prompting the user for their height.
+    Should the input be invalid (negative number or not a
+    number), the user will be prompted again. If the field was
+    left empty, however, a default height of 1.6 m is set
+    instead.
 
-    return sum/anArray.length;
-}
-
-/*
-    cameraHeight() 
-    
     postconditions:
         a value will be stored into the global variable
         userHeight, depending on the user input;
         the said value will be displayed to the HTML;
-        if global variables baseAngle, topAngle and userHeight
-        are defined, the calculate button will be enabled
+        the function buttonCheck() is run to determine if
+        the calculate button may be enabled
 */
 function cameraHeight()
 {
@@ -152,46 +188,44 @@ function cameraHeight()
     {
         if( userHeight == null || userHeight == "" )
         {
-            // In the case where the input field was left
-            // empty, a default height is set.
             userHeight = 1.6;
             alert("A default height of 1.6m has been set.")
         }
         else
         {
-            // In the case where the input is a negative number
-            // or not a number, the user will be alerted and
-            // prompted again.
             alert("Invalid input! Camera height should be a positive number.");
             userHeight = prompt("Please enter your camera height in metres.");
         }
     }
 
     document.getElementById("heightOfCamera").innerHTML = userHeight + " m";
-    if( baseAngle != undefined && topAngle != undefined && userHeight != undefined )
-    {
-        document.getElementById("calculateButton").disabled = false;
-    }
-    else
-    {
-        document.getElementById("calculateButton").disabled = true;
-    }
+    buttonCheck()
 }
 
 /*
     measureTopAngle()
-    
+
+    This function obtains a value for global variable
+    topAngle from global variable betaAverage, and prints this
+    value to the HTML. It will check if the current
+    betaAverage value is valid (beta between 0 and PI, and
+    larger that baseAngle if defined) and sane (gamma 
+    between -PI/6 and PI/6) first before allowing the
+    current betaAverage value to be saved into topAngle.
+
     preconditions:
         device must be in the appropriate orientation as
         specified in the if block of the first tier of
         if-else statements;
-        
+
     postconditions:
         global variable topAngle will be defined and the 
         current value of betaAverage will be printed into
         the HTML. If baseAngle was defined prior to running 
         this function, betaAverage is checked for validity
-        beforehand        
+        beforehand;
+        the function buttonCheck() is run to determine if
+        the calculate button may be enable        
 */
 function measureTopAngle()
 {
@@ -211,14 +245,7 @@ function measureTopAngle()
             alert("Top angle has been set successfully!");
         }
 
-        if( baseAngle != undefined && topAngle != undefined && userHeight != undefined )
-        {
-            document.getElementById("calculateButton").disabled = false;
-        }
-        else
-        {
-            document.getElementById("calculateButton").disabled = true;
-        }
+        buttonCheck()
     }
     else
     {
@@ -228,18 +255,28 @@ function measureTopAngle()
 
 /*
     measureBaseAngle()
-    
+
+    This function obtains a value for global variable
+    baseAngle from global variable betaAverage, and prints this
+    value to the HTML. It will check if the current
+    betaAverage value is valid (beta between 0 and PI/2, and
+    smaller that topAngle if defined) and sane (gamma 
+    between -PI/6 and PI/6) first before allowing the
+    current betaAverage value to be saved into baseAngle.
+
     preconditions:
         device must be in the appropriate orientation as
         specified in the if block of the first tier of
         if-else statements;
-        
+
     postconditions:
         global variable baseAngle will be defined and the 
         current value of betaAverage will be printed into
         the HTML. If topAngle was defined prior to running 
         this function, betaAverage is checked for validity
-        beforehand        
+        beforehand;
+        the function buttonCheck() is run to determine if
+        the calculate button may be enable        
 */
 function measureBaseAngle()
 {
@@ -259,14 +296,8 @@ function measureBaseAngle()
             alert("Base angle has been set successfully!");
         }
 
-        if( baseAngle != undefined && topAngle != undefined && userHeight != undefined )
-        {
-            document.getElementById("calculateButton").disabled = false;
-        }
-        else
-        {
-            document.getElementById("calculateButton").disabled = true;
-        }
+        buttonCheck();
+
     }
     else
     {
@@ -274,13 +305,20 @@ function measureBaseAngle()
     }
 }
 
- /*
+/*
     calculate()
-    
+
+    This function calculates the distance to the object
+    and the height of the object using the values of
+    baseAngle, topAngle and userHeight and some simple
+    trigonometry, then prints the calculated values to their
+    respective elements in the HTML.
+
     preconditions:
         global variables baseAngle, topAngle and userHeight
-        must be defined
-        
+        must be defined so that the calculate button which
+        calls this function may be enabled
+
     postconditions:
         calculated distance and height are printed to the HTML
 */
