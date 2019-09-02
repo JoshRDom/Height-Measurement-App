@@ -1,4 +1,6 @@
 /*
+try-catch: exception handling
+and reloadOrientationValues() function
 Extracted from: https://eng1003.monash/apps/sensortest/
 Sensor Test web app
 Copyright (c) 2019 Monash University
